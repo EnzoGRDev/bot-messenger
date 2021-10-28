@@ -53,12 +53,12 @@ function handleMessage(sender_psid, received_message) {
     // Create the payload
     if (whatWant.products.length === 1) {
       let prod = whatWant.products[0]
-      response = `${prod} $${prices[prod]}`
+      response = {"text": `${prod} $${prices[prod]}`}
     }
     else if(whatWant.products.length === 2 ){
       let prod = whatWant.products[0]
       let prodTwo = whatWant.products[1]
-      response = `${prod} $${prices[prod]} y ${prodTwo} $${prices[prodTwo]}`
+      response = {"text": `${prod} $${prices[prod]} y ${prodTwo} $${prices[prodTwo]}`}
     }  
   
   }else if(whatWant.is && !whatWant.products){
@@ -69,8 +69,8 @@ function handleMessage(sender_psid, received_message) {
         "payload": {
           "template_type": "generic",
           "elements": [{
-            "title": "Is this the right picture?",
-            "subtitle": "Tap a button to answer.",
+            "title": "¿Qué te interesó?",
+            "subtitle": "Toca un botón para continuar.",
             "buttons": products
               .map(prod => ({
                 "type": "postback",
