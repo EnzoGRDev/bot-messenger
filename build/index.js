@@ -11,21 +11,68 @@ const VERIFY_TOKEN = process.env.VERIFY_TOKEN;
 
 const request = require('request');
 
+const products = ["top", "remera", "short"];
+const prices = {
+  top: "150",
+  remera: "200",
+  short: "120"
+};
+const questions = ["precio", "presio", "cuanto", "cuánto"];
 app.use(cors({
   origin: "*"
 }));
 app.use(express.urlencoded({
   extended: true
 }));
-app.use(express.json()); // Handles messages events
+app.use(express.json()); //Handle What Want
+
+function handleWhatWant(message) {
+  if (!message) return false;
+  let wanting = {};
+  questions.find(quest => message.includes(quest) ? wanting.is = true : "");
+  products.forEach(product => message.includes(product) ? wanting.products += ` ${product}` : "");
+
+  if (wanting.products) {
+    wanting.products = wanting.products.split(" ");
+    if (wanting.products && wanting.products.includes("undefined")) wanting.products.shift();
+  }
+
+  return wanting.is || wanting.products ? wanting : false;
+} // Handles messages events
+
 
 function handleMessage(sender_psid, received_message) {
-  let response; // Check if the message contains text
+  const messageLowed = received_message.text.toLowerCase();
+  let response;
+  const whatWant = handleWhatWant(messageLowed); // Check the message
 
-  if (received_message.text) {
-    // Create the payload for a basic text message
+  if (whatWant.is && whatWant.products) {
+    // Create the payload
+    if (whatWant.products.length === 1) {
+      let prod = whatWant.products[0];
+      response = `${prod} $${prices[prod]}`;
+    } else if (whatWant.products.length === 2) {
+      let prod = whatWant.products[0];
+      let prodTwo = whatWant.products[1];
+      response = `${prod} $${prices[prod]} y ${prodTwo} $${prices[prodTwo]}`;
+    }
+  } else if (whatWant.is && !whatWant.products) {
     response = {
-      "text": `Tu enviaste el mensaje: "${received_message.text}". Ahora enviame una imagen!`
+      "attachment": {
+        "type": "template",
+        "payload": {
+          "template_type": "generic",
+          "elements": [{
+            "title": "Is this the right picture?",
+            "subtitle": "Tap a button to answer.",
+            "buttons": products.map(prod => ({
+              "type": "postback",
+              "title": prod[0].toUpperCase() + prod.slice(1),
+              "payload": prod
+            }))
+          }]
+        }
+      }
     };
   } // Sends the response message
 
@@ -34,7 +81,17 @@ function handleMessage(sender_psid, received_message) {
 } // Handles messaging_postbacks events
 
 
-function handlePostback(sender_psid, received_postback) {} // Sends response messages via the Send API
+function handlePostback(sender_psid, received_postback) {
+  let response; // Get the payload for the postback
+
+  let payload = received_postback.payload; // Set the response based on the postback payload
+
+  response = {
+    "text": `$${prices[payload]}`
+  }; // Send the message to acknowledge the postback
+
+  callSendAPI(sender_psid, response);
+} // Sends response messages via the Send API
 
 
 function callSendAPI(sender_psid, response) {
