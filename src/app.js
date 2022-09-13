@@ -4,6 +4,7 @@ const app = express()
 const cors = require('cors')
 const facebookRouter = require('./routes/facebookRoutes')
 const okRouter = require('./routes/okRoute')
+const politicsRouter = require('./routes/politicsRoute')
 
 app.use(cors({
   origin: "*",
@@ -11,6 +12,6 @@ app.use(cors({
 }))
 app.use(express.urlencoded({extended: true}))
 app.use(express.json())
-app.use("/", facebookRouter, okRouter)
+app.use("/", facebookRouter, okRouter, politicsRouter)
 
 module.exports = app
