@@ -101,7 +101,7 @@ function handleWhatWant(message){
     }
   }
   
-  return wanting.is
+  return wanting
 }
 
 const facebookHandlers = {
