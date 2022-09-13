@@ -16,7 +16,7 @@ function handleMessage(sender_psid, received_message) {
 
   // Check the message
   if (whatWant.is && whatWant.products.length) {
-    
+    response.text = ""
     // Create the payload
     for(let product of whatWant.products){
       response.text += `${product} ${prices[product]} \n`
@@ -24,6 +24,8 @@ function handleMessage(sender_psid, received_message) {
   
   }else if(whatWant.is && !whatWant.products.length){
     // Create the payload
+    response.attachment = {}
+    response.attachment.payload = {}
     response.attachment.type = "template"
     response.attachment.payload.template_type = "generic"
     response.attachment.payload.elements = [{
@@ -31,9 +33,9 @@ function handleMessage(sender_psid, received_message) {
       subtitle: "Toca un botón para continuar.",
       buttons: products
         .map(prod => ({
-          "type": "postback",
-          "title": prod.toUpperCase() + " $" +  prices[prod],
-          "payload": prod,
+          type: "postback",
+          title: prod.toUpperCase() + " $" +  prices[prod],
+          payload: prod,
         })),
     }]
     
