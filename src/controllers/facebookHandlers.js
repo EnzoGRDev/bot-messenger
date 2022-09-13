@@ -11,7 +11,7 @@ const regexWant = /pre.io|cuanto|\$+/g
 // Handles messages events
 function handleMessage(sender_psid, received_message) {
   const messageLowed = received_message.text.toLowerCase()
-  let response
+  let response = {}
   const whatWant = handleWhatWant(messageLowed) 
 
   // Check the message
