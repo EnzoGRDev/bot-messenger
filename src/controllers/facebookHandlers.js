@@ -97,11 +97,11 @@ function handleWhatWant(message){
 
   wanting.is = regexWant.test(messageLowed) // is the expected message?
   
-  for (let product of products){
+  products.forEach(product => {
     if(messageLowed.includes(product)){
       wanting.products.push(product)
-    }
-  }
+    }    
+  })
   
   return wanting
 }
